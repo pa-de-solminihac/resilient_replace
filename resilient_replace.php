@@ -1,6 +1,19 @@
+#!/usr/bin/php
 <?php
-// #!/usr/bin/php
-function resilient_replace ($search, $replace, $subject) {
+if (empty($argv[1]) || empty($argv[2])) {
+    file_put_contents('php://stderr', 'Usage : resilient_replace.php <search> <replace> [<file>]');
+    die();
+}
+
+$search  = $argv[1];
+$replace = $argv[2];
+
+$content_from_stdin = 0;
+if (empty($argv[3])) {
+    $content_from_stdin = 1;
+}
+
+function resilient_replace ($search, $replace, $subject, $only_into_serialized = false) {
     $search_escaped = str_replace("\\", "\\\\\\\\\\\\\\\\\\\\", $search);
     $replace_escaped = str_replace("'", "\\'", $replace);
     $delta = strlen($replace) - strlen($search);
@@ -12,18 +25,22 @@ function resilient_replace ($search, $replace, $subject) {
         . ':\\2\"' 
         . preg_replace('/" . $search_escaped . "/', '" . $replace_escaped . "', '\\3') . '\\2\";'",
         $subject);
+    if (!$only_into_serialized) {
+        $str = preg_replace('/' . $search_escaped . '/', $replace_escaped, $str);
+    }
     return $str;
 }
-// $handle = fopen('php://stdin', 'r');
-$handle = fopen('source.txt', 'r');
+if ($content_from_stdin) {
+    $handle = fopen('php://stdin', 'r');
+} else {
+    $handle = fopen($argv[3], 'r');
+}
 $buffer = '';
 while(!feof($handle)) {
     $buffer .= fgets($handle);
 }
 fclose($handle);
-echo '<pre>';
-// echo $buffer;
-echo resilient_replace('www.mondomaine.fr', "mon.autredomaine.fr/mondomaine", $buffer);
-echo '</pre>';
+$buffer = resilient_replace($search, $replace, $buffer);
+echo $buffer;
 
 ?>
