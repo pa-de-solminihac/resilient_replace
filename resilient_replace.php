@@ -42,7 +42,6 @@ if (empty($argv[3])) {
 /*echo 'search: ' . $search . PHP_EOL;*/
 /*echo 'replace: ' . $replace . PHP_EOL;*/
 
-
 function resilient_replace ($search, $replace, $subject, $only_into_serialized = false) {
     $str = $subject;
     $search_escaped = str_replace("\\", "\\\\\\\\\\\\\\\\\\\\", $search);
