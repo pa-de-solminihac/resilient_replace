@@ -44,7 +44,7 @@ if (empty($argv[3])) {
 
 function resilient_replace ($search, $replace, $subject, $only_into_serialized = false) {
     $str = $subject;
-    $search_escaped = str_replace("\\", "\\\\\\\\\\\\\\\\\\\\", $search);
+    // $search_escaped = str_replace("\\", "\\\\\\\\\\\\\\\\\\\\", $search);
     $replace_escaped = str_replace("'", "\\'", $replace);
 
     //$debug_str = "
@@ -52,18 +52,18 @@ function resilient_replace ($search, $replace, $subject, $only_into_serialized =
     //$replace => $replace_escaped";
     //file_put_contents('php://stderr', $debug_str . PHP_EOL);
 
-    $delta = strlen($replace) - strlen($search);
+    $delta = strlen($replace) - strlen(stripslashes($search));
     // $nb_matches = preg_match
-    file_put_contents('php://stderr', 'replace into serialized' . PHP_EOL);
+    // file_put_contents('php://stderr', 'replace into serialized' . PHP_EOL);
     $str = preg_replace(
         '/s:(\d+):(\\\?)"(.*?)\\2";/e',
         "'s:' 
-        . (intval('\\1', 10) + preg_match_all('/" . $search_escaped . "/', '\\3', \$dummy) * (" . $delta . ")) 
+        . (intval('\\1', 10) + preg_match_all('/" . $search . "/', '\\3', \$dummy) * (" . $delta . ")) 
         . ':\\2\"' 
-        . preg_replace('/" . $search_escaped . "/', '" . $replace_escaped . "', '\\3') . '\\2\";'",
+        . preg_replace('/" . $search . "/', '" . $replace_escaped . "', str_replace('\\\"', '\"', '\\3')) . '\\2\";'",
         $str);
     if (!$only_into_serialized) {
-        file_put_contents('php://stderr', 'replace into raw' . PHP_EOL);
+        // file_put_contents('php://stderr', 'replace into raw' . PHP_EOL);
         $str = preg_replace('/' . $search . '/', $replace, $str);
     }
     return $str;
