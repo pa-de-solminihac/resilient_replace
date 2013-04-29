@@ -1,5 +1,7 @@
 #!/usr/bin/php
 <?php
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 'on');
 ini_set('memory_limit', -1);
 ini_set('max_execution_time', 0);
 if (empty($argv[1]) || empty($argv[2])) {
@@ -73,20 +75,28 @@ if ($content_from_stdin) {
 } else {
     $handle = fopen($filename, 'r');
 }
-$buffer = '';
-while(!feof($handle)) {
-    $buffer .= fgets($handle);
+if (!empty($options['-i'])) {
+    $tempnam = tempnam(dirname($filename), $filename . '-');
+    $write_handle = fopen($tempnam, 'w');
 }
-fclose($handle);
 $only_into_serialized = 0;
 if (!empty($options['--only-into-serialized'])) {
     $only_into_serialized = 1;
 }
-$buffer = resilient_replace($search, $replace, $buffer, $only_into_serialized);
+$buffer = '';
+while(!feof($handle)) {
+    $buffer = fgets($handle);
+    $buffer = resilient_replace($search, $replace, $buffer, $only_into_serialized);
+    if (!empty($options['-i'])) {
+        fwrite($write_handle, $buffer);
+    } else {
+        echo $buffer;
+    }
+}
+fclose($handle);
 if (!empty($options['-i'])) {
-    file_put_contents($filename, $buffer);
-} else {
-    echo $buffer;
+    fclose($write_handle);
+    rename($tempnam, $filename);
 }
 
 ?>
