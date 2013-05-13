@@ -6,11 +6,11 @@ ini_set('memory_limit', -1);
 ini_set('max_execution_time', 0);
 if (empty($argv[1]) || empty($argv[2])) {
     file_put_contents('php://stderr', '
-Usage: resilient_replace.php <search> <replace> [<file>]
+Usage: ' . $argv[0] . ' <search_pattern> <replace> [<file>]
 
 Options:
     -i
-        edit in place
+        edit file in place
 
     --only-into-serialized
         replace only into serialized data (do not replace into raw data)
