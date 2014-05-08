@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 'on');
+ini_set('display_errors', 'off');
 ini_set('memory_limit', -1);
 ini_set('max_execution_time', 0);
 if (empty($argv[1]) || empty($argv[2])) {
@@ -15,7 +15,7 @@ Options:
     --only-into-serialized
         replace only into serialized data (do not replace into raw data)
 
-        ');
+');
     die();
 }
 
@@ -40,23 +40,11 @@ if (empty($argv[3])) {
     $filename = $argv[3];
 }
 
-/*print_r($options);*/
-/*echo 'search: ' . $search . PHP_EOL;*/
-/*echo 'replace: ' . $replace . PHP_EOL;*/
-
-function resilient_replace ($search, $replace, $subject, $only_into_serialized = false) {
+function resilient_replace($search, $replace, $subject, $only_into_serialized = false) {
     $str = $subject;
-    // $search_escaped = str_replace("\\", "\\\\\\\\\\\\\\\\\\\\", $search);
     $replace_escaped = str_replace("'", "\\'", $replace);
 
-    //$debug_str = "
-    //$search => $search_escaped
-    //$replace => $replace_escaped";
-    //file_put_contents('php://stderr', $debug_str . PHP_EOL);
-
     $delta = strlen($replace) - strlen(stripslashes($search));
-    // $nb_matches = preg_match
-    // file_put_contents('php://stderr', 'replace into serialized' . PHP_EOL);
     $str = preg_replace(
         '/s:(\d+):(\\\?)"(.*?)\\2";/e',
         "'s:' 
@@ -99,4 +87,3 @@ if (!empty($options['-i'])) {
     rename($tempnam, $filename);
 }
 
-?>
