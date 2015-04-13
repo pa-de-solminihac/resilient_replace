@@ -1,9 +1,11 @@
 #!/usr/bin/env php
 <?php
 ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 'off');
+ini_set('display_errors', 0);
 ini_set('memory_limit', -1);
 ini_set('max_execution_time', 0);
+ini_set('log_errors', 0);
+ini_set('error_log', '/dev/null');
 if (empty($argv[1]) || empty($argv[2])) {
     file_put_contents('php://stderr', '
 Usage: ' . $argv[0] . ' <search_pattern> <replace> [<file>]
