@@ -4,13 +4,16 @@ Search and replace, updating serialized text if needed
 
 ## Install
 
+If you already have a `~/bin` directory in your `$PATH`, you can 
+
 ```bash
-git clone https://github.com/pa-de-solminihac/resilient_replace.git /path/to/resilient_replace
+git clone https://github.com/pa-de-solminihac/resilient_replace.git ~/bin/resilient_replace_git && ln -s ~/bin/resilient_replace_git/resilient_replace ~/bin/resilient_replace
 ```
+
 
 ## Usage
 ```bash
-    /path/to/resilient_replace <search_pattern> <replace> [<file>]
+resilient_replace <search_pattern> <replace> [<file>]
 ```
 
 ### Options
