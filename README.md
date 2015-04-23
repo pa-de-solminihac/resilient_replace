@@ -23,6 +23,15 @@ cd ~/bin/resilient_replace_git && git pull
 resilient_replace <search_pattern> <replace> [<file>]
 ```
 
+### Example
+```bash
+# change domain in dump.sql
+resilient_replace -i 'domain\.com' 'newdomain.com' dump.sql
+```
+
+**Note**
+> `<search_pattern>` is a regexp
+
 ### Options
 ```
     -i
