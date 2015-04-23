@@ -1,14 +1,19 @@
-resilient_replace
-=================
+# resilient_replace
 
 Search and replace, updating serialized text if needed
 
-**Usage:**
-```
-    ./resilient_replace <search_pattern> <replace> [<file>]
+## Install
+
+```bash
+git clone https://github.com/pa-de-solminihac/resilient_replace.git /path/to/resilient_replace
 ```
 
-**Options:**
+## Usage
+```bash
+    /path/to/resilient_replace <search_pattern> <replace> [<file>]
+```
+
+### Options
 ```
     -i
         edit file in place
