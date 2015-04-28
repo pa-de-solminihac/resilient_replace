@@ -55,8 +55,9 @@ if (!empty($options['--only-into-serialized'])) {
 // extract command line parameters
 $search  = $argv[1];
 if (!$use_regex) {
-    $search = str_replace('/', '\/', preg_quote($search));
+    $search = preg_quote($search);
 }
+$search = str_replace('/', '\/', $search);
 $replace = $argv[2];
 $content_from_stdin = 0;
 $filename = '';
