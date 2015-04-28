@@ -1,18 +1,24 @@
 #!/usr/bin/env php
 <?php
+// be quiet, dont mess everything
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 0);
 ini_set('memory_limit', -1);
 ini_set('max_execution_time', 0);
 ini_set('log_errors', 0);
 ini_set('error_log', '/dev/null');
+
+// usage
 if (empty($argv[1]) || empty($argv[2])) {
     file_put_contents('php://stderr', '
 Usage: ' . $argv[0] . ' <search_pattern> <replace> [<file>]
 
 Options:
-    -i
+    -i, --in-place
         edit file in place
+
+    --regex
+        treat <search_pattern> as a regex
 
     --only-into-serialized
         replace only into serialized data (do not replace into raw data)
@@ -21,7 +27,7 @@ Options:
     die();
 }
 
-// extrait les options
+// extract options
 $options = array();
 foreach ($argv as $key => $arg) {
     if (strpos($arg, '-') === 0) {
@@ -30,9 +36,27 @@ foreach ($argv as $key => $arg) {
     }
 }
 $argv = array_values($argv);
+// option: -i, --in-place
+if (!empty($options['-i']) || !empty($options['--in-place'])) {
+    $tempnam = tempnam(dirname($filename), $filename . '-');
+    $write_handle = fopen($tempnam, 'w');
+}
+// option: --regex
+$use_regex = 0;
+if (!empty($options['--regex'])) {
+    $use_regex = 1;
+}
+// option: --only-into-serialized
+$only_into_serialized = 0;
+if (!empty($options['--only-into-serialized'])) {
+    $only_into_serialized = 1;
+}
 
-// recupere les parametres
+// extract command line parameters
 $search  = $argv[1];
+if (!$use_regex) {
+    $search = preg_quote($search);
+}
 $replace = $argv[2];
 $content_from_stdin = 0;
 $filename = '';
@@ -42,6 +66,29 @@ if (empty($argv[3])) {
     $filename = $argv[3];
 }
 
+// run
+$buffer = '';
+if ($content_from_stdin) {
+    $handle = fopen('php://stdin', 'r');
+} else {
+    $handle = fopen($filename, 'r');
+}
+while(!feof($handle)) {
+    $buffer = fgets($handle);
+    $buffer = resilient_replace($search, $replace, $buffer, $only_into_serialized);
+    if (!empty($options['-i'])) {
+        fwrite($write_handle, $buffer);
+    } else {
+        echo $buffer;
+    }
+}
+fclose($handle);
+if (!empty($options['-i'])) {
+    fclose($write_handle);
+    rename($tempnam, $filename);
+}
+
+// function definition
 function resilient_replace($search, $replace, $subject, $only_into_serialized = false) {
     $str = $subject;
     $replace_escaped = str_replace("'", "\\'", $replace);
@@ -60,32 +107,3 @@ function resilient_replace($search, $replace, $subject, $only_into_serialized = 
     }
     return $str;
 }
-if ($content_from_stdin) {
-    $handle = fopen('php://stdin', 'r');
-} else {
-    $handle = fopen($filename, 'r');
-}
-if (!empty($options['-i'])) {
-    $tempnam = tempnam(dirname($filename), $filename . '-');
-    $write_handle = fopen($tempnam, 'w');
-}
-$only_into_serialized = 0;
-if (!empty($options['--only-into-serialized'])) {
-    $only_into_serialized = 1;
-}
-$buffer = '';
-while(!feof($handle)) {
-    $buffer = fgets($handle);
-    $buffer = resilient_replace($search, $replace, $buffer, $only_into_serialized);
-    if (!empty($options['-i'])) {
-        fwrite($write_handle, $buffer);
-    } else {
-        echo $buffer;
-    }
-}
-fclose($handle);
-if (!empty($options['-i'])) {
-    fclose($write_handle);
-    rename($tempnam, $filename);
-}
-
