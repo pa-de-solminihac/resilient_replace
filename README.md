@@ -1,6 +1,8 @@
 # Search, replace and update `JSON`/serialized text
 
-## Example
+With support for pipes, regexes, and efficiently using memory for large files
+
+## Examples
 
 Replace _domain.com_ with _newdomain.com_ in a **dump.sql** file
 
