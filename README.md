@@ -28,16 +28,17 @@ resilient_replace <search_pattern> <replace> [<file>]
 ### Example
 ```bash
 # change domain in dump.sql
-resilient_replace -i 'domain\.com' 'newdomain.com' dump.sql
+resilient_replace -i 'domain.com' 'newdomain.com' dump.sql
 ```
 
-**Note**
-> `<search_pattern>` is a regexp
 
 ### Options
 ```
-    -i
+    -i, --in-place
         edit file in place
+
+    --regex
+        treat <search_pattern> as a regex
 
     --only-into-serialized
         replace only into serialized data (do not replace into raw data)
