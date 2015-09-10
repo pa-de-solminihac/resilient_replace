@@ -1,34 +1,30 @@
-# resilient_replace
+# Search, replace and update `JSON`/serialized text
 
-Search and replace, updating serialized text if needed
+## Example
 
-## Install
-
-If you already have a `~/bin` directory in your `$PATH`, you can just paste this in a terminal:
+Replace _domain.com_ with _newdomain.com_ in a **dump.sql** file
 
 ```bash
-mkdir -p ~/bin && \
-git clone https://github.com/pa-de-solminihac/resilient_replace.git ~/bin/resilient_replace_git && \
-ln -s ~/bin/resilient_replace_git/resilient_replace ~/bin/resilient_replace
+resilient_replace -i 'domain.com' 'newdomain.com' dump.sql
 ```
 
+### Using regular expressions
 
-## Upgrade
+Replace _test**0**.domain.com_ or _test**11**.domain.com_ but not _test**ing**.domain.com_
 
 ```bash
-cd ~/bin/resilient_replace_git && git pull
+resilient_replace -i --regex 'test[0-9]*.domain\.com' 'newdomain.com' dump.sql
+```
+
+### Using pipes
+```bash
+cat file.json | resilient_replace 'domain.com' 'newdomain.com'
 ```
 
 
 ## Usage
 ```bash
 resilient_replace <search_pattern> <replace> [<file>]
-```
-
-### Example
-```bash
-# change domain in dump.sql
-resilient_replace -i 'domain.com' 'newdomain.com' dump.sql
 ```
 
 
@@ -43,3 +39,22 @@ resilient_replace -i 'domain.com' 'newdomain.com' dump.sql
     --only-into-serialized
         replace only into serialized data (do not replace into raw data)
 ```
+
+
+## Install
+
+If you already have a `~/bin` directory in your `$PATH`, you can just paste this in a terminal:
+
+```bash
+mkdir -p ~/bin && \
+git clone https://github.com/pa-de-solminihac/resilient_replace.git ~/bin/resilient_replace_git && \
+ln -s ~/bin/resilient_replace_git/resilient_replace ~/bin/resilient_replace
+```
+
+
+### Upgrade
+
+```bash
+cd ~/bin/resilient_replace_git && git pull
+```
+
