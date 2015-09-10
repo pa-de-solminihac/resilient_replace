@@ -1,4 +1,4 @@
-# Search, replace and update `JSON`/serialized text
+# Search, replace and update serialized text
 
 With support for pipes, regexes, and efficiently using memory for large files
 
@@ -20,7 +20,7 @@ resilient_replace -i --regex 'test[0-9]*.domain\.com' 'newdomain.com' dump.sql
 
 ### Pipes support
 ```bash
-cat file.json | resilient_replace 'domain.com' 'newdomain.com'
+cat dump.sql | resilient_replace 'domain.com' 'newdomain.com'
 ```
 
 
