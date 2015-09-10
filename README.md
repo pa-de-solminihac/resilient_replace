@@ -8,15 +8,15 @@ Replace _domain.com_ with _newdomain.com_ in a **dump.sql** file
 resilient_replace -i 'domain.com' 'newdomain.com' dump.sql
 ```
 
-### Using regular expressions
+### Regular expressions support (PCRE regex)
 
-Replace _test**0**.domain.com_ or _test**11**.domain.com_ but not _test**ing**.domain.com_
+Using `--regex` your can replace _test**0**.domain.com_ or _test**11**.domain.com_ but not _test**ing**.domain.com_
 
 ```bash
 resilient_replace -i --regex 'test[0-9]*.domain\.com' 'newdomain.com' dump.sql
 ```
 
-### Using pipes
+### Pipes support
 ```bash
 cat file.json | resilient_replace 'domain.com' 'newdomain.com'
 ```
