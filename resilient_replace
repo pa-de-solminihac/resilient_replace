@@ -90,21 +90,33 @@ if (!empty($options['-i'])) {
 }
 
 // function definition
-function resilient_replace($search, $replace, $subject, $only_into_serialized = false) {
+function resilient_replace($search, $replace, $subject, $only_into_serialized = false, $search_opts = false) {
     $str = $subject;
-    $replace_escaped = str_replace("'", "\\'", $replace);
-
-    $delta = strlen($replace) - strlen(stripslashes($search));
-    $str = preg_replace(
-        '/s:(\d+):(\\\?)"(.*?)\\2";/e',
-        "'s:' 
-        . (intval('\\1', 10) + preg_match_all('/" . $search . "/', '\\3', \$dummy) * (" . $delta . ")) 
-        . ':\\2\"' 
-        . preg_replace('/" . $search . "/', '" . $replace_escaped . "', str_replace('\\\"', '\"', '\\3')) . '\\2\";'",
-        $str);
+    $replace_escaped = addslashes($replace);
+    $replace_escaped = str_replace('"', '\\', $replace_escaped);
+    $replace_escaped = str_replace("'", '\\', $replace_escaped);
+    $callback = function($m) use ($search, $replace, $search_opts, $replace_escaped) {
+        $dummy = array();
+        $matched = preg_match('/' . $search . '/' . $search_opts, $m[3], $dummy);
+        $matched_size = 0;
+        if (!empty($dummy[0])) {
+            $matched_size = strlen(stripslashes($dummy[0]));
+        }
+        $result = 's:'
+            . (intval($m[1], 10) + $matched * (strlen($replace) - $matched_size))
+            . ':' . $m[2] . '"'
+            . preg_replace('/' . $search . '/' . $search_opts, $replace_escaped, ($m[3]))
+            . $m[2] . '";';
+        return $result;
+    };
+    $str = preg_replace_callback(
+        '/s:(\d+):(\\\?)"(.*?)\\2";/',
+        $callback,
+        $str
+    );
     if (!$only_into_serialized) {
         // file_put_contents('php://stderr', 'replace into raw' . PHP_EOL);
-        $str = preg_replace('/' . $search . '/', $replace, $str);
+        $str = preg_replace('/' . $search . '/' . $search_opts, $replace, $str);
     }
     return $str;
 }
