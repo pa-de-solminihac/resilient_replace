@@ -53,7 +53,7 @@ if (!empty($options['--only-into-serialized'])) {
 }
 
 // extract command line parameters
-$search  = $argv[1];
+$search = $argv[1];
 if (!$use_regex) {
     $search = preg_quote($search);
 }
@@ -74,7 +74,7 @@ if ($content_from_stdin) {
 } else {
     $handle = fopen($filename, 'r');
 }
-while(!feof($handle)) {
+while (!feof($handle)) {
     $buffer = fgets($handle);
     $buffer = resilient_replace($search, $replace, $buffer, $only_into_serialized);
     if (!empty($options['-i'])) {
@@ -90,12 +90,14 @@ if (!empty($options['-i'])) {
 }
 
 // function definition
-function resilient_replace($search, $replace, $subject, $only_into_serialized = false, $search_opts = false) {
+function resilient_replace($search, $replace, $subject, $only_into_serialized = false, $search_opts = false)
+{
     $str = $subject;
     $replace_escaped = addslashes($replace);
     $replace_escaped = str_replace('"', '\\', $replace_escaped);
     $replace_escaped = str_replace("'", '\\', $replace_escaped);
-    $callback = function($m) use ($search, $replace, $search_opts, $replace_escaped) {
+    $callback = function ($m) use ($search, $replace, $search_opts, $replace_escaped)
+    {
         $dummy = array();
         $matched = preg_match('/' . $search . '/' . $search_opts, $m[3], $dummy);
         $matched_size = 0;
@@ -109,11 +111,7 @@ function resilient_replace($search, $replace, $subject, $only_into_serialized = 
             . $m[2] . '";';
         return $result;
     };
-    $str = preg_replace_callback(
-        '/s:(\d+):(\\\?)"(.*?)\\2";/',
-        $callback,
-        $str
-    );
+    $str = preg_replace_callback('/s:(\d+):(\\\?)"(.*?)\\2";/', $callback, $str);
     if (!$only_into_serialized) {
         // file_put_contents('php://stderr', 'replace into raw' . PHP_EOL);
         $str = preg_replace('/' . $search . '/' . $search_opts, $replace, $str);
