@@ -36,6 +36,13 @@ foreach ($argv as $key => $arg) {
     }
 }
 $argv = array_values($argv);
+$content_from_stdin = 0;
+$filename = '';
+if (empty($argv[3])) {
+    $content_from_stdin = 1;
+} else {
+    $filename = $argv[3];
+}
 // option: -i, --in-place
 if (!empty($options['-i']) || !empty($options['--in-place'])) {
     $tempnam = tempnam(dirname($filename), $filename . '-');
@@ -59,13 +66,6 @@ if (!$use_regex) {
 }
 $search = str_replace('/', '\/', $search);
 $replace = $argv[2];
-$content_from_stdin = 0;
-$filename = '';
-if (empty($argv[3])) {
-    $content_from_stdin = 1;
-} else {
-    $filename = $argv[3];
-}
 
 // run
 $buffer = '';
