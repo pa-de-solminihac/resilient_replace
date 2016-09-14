@@ -1,4 +1,4 @@
-# Search and replace, even in serialized text
+# Resilient replace : search and replace, even in serialized text
 
 With support for pipes, regexes, and efficiently using memory for large files
 
