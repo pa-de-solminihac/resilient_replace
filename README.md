@@ -12,7 +12,7 @@ resilient_replace -i 'domain.com' 'newdomain.com' dump.sql
 
 ### Regular expressions support (PCRE regex)
 
-Using `--regex` your can replace _test**0**.domain.com_ or _test**11**.domain.com_ but not _test**ing**.domain.com_
+Using `--regex` your can replace _test**0**.domain.com_ or _test**11**.domain.com_ without changing _test**ing**.domain.com_
 
 ```bash
 resilient_replace -i --regex 'test[0-9]*.domain\.com' 'newdomain.com' dump.sql
