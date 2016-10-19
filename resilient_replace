@@ -61,9 +61,8 @@ if (!empty($options['--only-into-serialized'])) {
 
 // extract command line parameters
 $search = $argv[1];
-$search = str_replace('/', '\/', $search);
 if (!$use_regex) {
-    $search = preg_quote($search);
+    $search = preg_quote($search, '/');
 }
 $replace = $argv[2];
 
