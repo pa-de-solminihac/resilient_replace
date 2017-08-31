@@ -11,7 +11,7 @@ ini_set('error_log', '/dev/null');
 // usage
 if (empty($argv[1]) || empty($argv[2])) {
     file_put_contents('php://stderr', '
-Usage: ' . $argv[0] . ' <search_pattern> <replace> [<file>]
+Usage: ' . $argv[0] . ' <search_pattern> <replace> [<file> | -]
 
 Options:
     -i, --in-place
@@ -22,6 +22,9 @@ Options:
 
     --only-into-serialized
         replace only into serialized data (do not replace into raw data)
+
+    -
+        read from stdin instead of a file
 
 ');
     die();
@@ -41,7 +44,15 @@ $filename = '';
 if (empty($argv[3])) {
     $content_from_stdin = 1;
 } else {
-    $filename = $argv[3];
+    $filename = realpath($argv[3]);
+    if (!is_file($filename)) {
+        if (file_exists($filename)) {
+            file_put_contents('php://stderr', 'Not a file: ' . escapeshellarg($argv[3]));
+        } else {
+            file_put_contents('php://stderr', 'File not found: ' . escapeshellarg($argv[3]));
+        }
+        die(1);
+    }
 }
 // option: -i, --in-place
 if (!empty($options['-i']) || !empty($options['--in-place'])) {
