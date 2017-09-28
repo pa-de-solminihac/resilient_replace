@@ -96,6 +96,7 @@ while (!feof($handle)) {
 fclose($handle);
 if (!empty($options['-i'])) {
     fclose($write_handle);
+    chmod($tempnam, fileperms($filename));
     rename($tempnam, $filename);
 }
 
